@@ -1,0 +1,11 @@
+*
+!my_package/
+!my_package/**
+!tests/
+!tests/**
+!README.md
+!pyproject.toml
+!main.py
+!.gitignore
+!LICENSE
+__pycache__
