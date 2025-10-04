@@ -2,7 +2,9 @@ import subprocess
 import os
 import sys
 import re
-from ._config import NotesREPOConfig
+from ._config import NotesREPOConfig, PYTHON_INTERPRETER, TREE_MAKE, ThisREPOConfig
+import shutil
+from pathlib import Path
 
 
 class NotesREPO:
@@ -15,10 +17,17 @@ class NotesREPO:
 
     def save(self):
         print("对 NotesREPO 目录执行 git add")
-        self._run_command(["git", "add", str(self.config.repo_dir)])
+        self._run_command(f"git add {str(self.config.repo_dir)}")
 
         print("对 NotesREPO 目录执行 git commit")
-        self._run_command(["git", "commit", "-m", self.config.repo_commit_message])
+        self._run_command(f"git commit -m {self.config.repo_commit_message}")
+
+    def make_tree(self):
+        print(f"正在用{PYTHON_INTERPRETER}执行{TREE_MAKE}制作目录树")
+        self._run_command(f"{PYTHON_INTERPRETER} {TREE_MAKE}")
+        src = Path("D:/Workspace/Repos/tree_make/tree.md")
+        dst = Path(ThisREPOConfig.repo_dir / "tree.md")
+        shutil.copy(src, dst)
 
     def compress(self):
         print("--- 开始压缩文件 ---")
@@ -64,7 +73,7 @@ class NotesREPO:
         else:
             print(f"文件已成功压缩到: {self.config.output_path}")
 
-    def _run_command(self, command: list[str], check: bool = True):
+    def _run_command(self, command: str, check: bool = True):
         try:
             return subprocess.run(
                 command,
